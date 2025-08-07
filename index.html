@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra cứu phong thủy bất động sản</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .score-stars i {
+            color: gold;
+        }
+        table.summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table.summary-table td {
+            border: 1px solid #c49b66;
+            padding: 6px 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-dragon"></i> Tra cứu phong thủy bất động sản</h1>
+        <form id="fengshuiForm">
+            <!-- FORM GIỮ NGUYÊN -->
+            <!-- ... Các input đã có ... -->
+            <div class="form-group">
+                <button type="button" onclick="calculate()"><i class="fas fa-search"></i> Xem phong thủy</button>
+            </div>
+        </form>
+        <div id="result"></div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        // Ghi đè hàm calculate để bổ sung icon, điểm số và bảng tóm tắt
+        const originalCalculate = calculate;
+        function calculate() {
+            originalCalculate(); // chạy logic gốc
+
+            const resultDiv = document.getElementById('result');
+            const html = resultDiv.innerHTML;
+            let score = 100;
+            if (html.includes('Phạm Kim Lâu') || html.includes('Phạm Hoàng Ốc') || html.includes('Phạm Tam Tai')) score -= 30;
+            if (html.includes('<ul>')) score -= 30;
+            if (score < 0) score = 0;
+
+            let stars = Math.round(score / 20);
+            let starIcons = '<div class="score-stars">';
+            for (let i = 0; i < 5; i++) {
+                starIcons += i < stars ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+            }
+            starIcons += '</div>';
+
+            // Thêm bảng tóm tắt
+            const canChi = html.match(/Can Chi.*?:.*? (.*?)<\/p>/)?.[1] || '-';
+            const menh = html.match(/Mệnh ngũ hành.*?:.*? (.*?)<\/p>/)?.[1] || '-';
+            const cung = html.match(/Cung mệnh.*?:.*? (.*?)<\/p>/)?.[1] || '-';
+            const tuoi = html.match(/Tuổi xây nhà \((\d+)/)?.[1] || '-';
+
+            const table = `
+            <table class="summary-table">
+                <tr><td><strong>Can Chi</strong></td><td>${canChi}</td></tr>
+                <tr><td><strong>Ngũ hành</strong></td><td>${menh}</td></tr>
+                <tr><td><strong>Cung mệnh</strong></td><td>${cung}</td></tr>
+                <tr><td><strong>Tuổi xây nhà</strong></td><td>${tuoi}</td></tr>
+                <tr><td><strong>Điểm tổng quát</strong></td><td>${score}/100</td></tr>
+            </table>`;
+
+            resultDiv.innerHTML = `${starIcons}${table}` + resultDiv.innerHTML;
+        }
+    </script>
+</body>
+</html>
